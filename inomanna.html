@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tara Inum? 🍻</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'fun': ['"Fredoka One"', 'cursive'],
+                        'body': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'neon-green': '#39ff14',
+                        'neon-pink': '#ff007f',
+                        'neon-blue': '#00f0ff',
+                        'dark-bg': '#0a0a0a',
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'pop-in': 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(57, 255, 20, 0.5)' },
+                            '50%': { boxShadow: '0 0 30px rgba(57, 255, 20, 0.9)' },
+                        },
+                        popIn: {
+                            '0%': { transform: 'scale(0.5)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0a0a0a;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 0, 127, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08) 0%, transparent 50%);
+            overflow: hidden; /* Prevent scrolling when button moves out of bounds initially */
+            touch-action: manipulation; /* Optimize touch behavior */
+        }
+
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-glow-pink {
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.8), 0 0 20px rgba(255, 0, 127, 0.4);
+        }
+
+        .text-glow-blue {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        /* The runaway button styling */
+        #btn-no {
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 50;
+        }
+
+        /* Confetti elements */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: fall 3s linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen w-full flex items-center justify-center font-body text-white relative">
+
+    <!-- Audio Element for Success (Optional, user can tap to play) -->
+    <audio id="cheerAudio" preload="auto"></audio>
+
+    <main class="w-full max-w-md p-6 relative z-10">
+        
+        <!-- INITIAL QUESTION VIEW -->
+        <div id="question-view" class="glass-panel p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center transform transition-all duration-500">
+            
+            <!-- Graphic/Emoji -->
+            <div class="text-7xl mb-6 animate-bounce-slow filter drop-shadow-[0_0_15px_rgba(255,200,0,0.5)]">
+                🍺
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-fun text-4xl mb-2 text-neon-blue text-glow-blue tracking-wide">
+                Inom niyan guys?
+            </h1>
+            <p class="text-gray-400 mb-8 text-sm font-semibold">
+                Mauhaw na, G?
+            </p>
+
+            <!-- Buttons Container -->
+            <div class="flex flex-col sm:flex-row gap-4 w-full justify-center items-center relative h-14">
+                
+                <!-- Yes Button -->
+                <button id="btn-yes" class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-green-500 to-neon-green text-black font-extrabold rounded-full animate-pulse-glow transform hover:scale-105 active:scale-95 transition-all shadow-lg text-lg flex items-center justify-center gap-2">
+                    G! Shot Puno! 🍻
+                </button>
+
+                <!-- No Button (The Runaway) -->
+                <!-- It starts relative in the flexbox, but JS will change it to fixed upon interaction -->
+                <button id="btn-no" class="w-full sm:w-auto px-8 py-3 bg-gray-800 text-gray-300 font-bold rounded-full border border-gray-600 hover:bg-red-600 hover:text-white hover:border-red-500 shadow-md text-lg flex items-center justify-center gap-2 touch-none">
+                    Diak 🚫
+                </button>
+                
+            </div>
+        </div>
+
+        <!-- SUCCESS VIEW (Hidden by default) -->
+        <div id="success-view" class="hidden glass-panel p-8 rounded-3xl shadow-2xl flex-col items-center text-center animate-pop-in">
+            
+            <div class="text-7xl mb-4 filter drop-shadow-[0_0_20px_rgba(57,255,20,0.6)]">
+                🥳🥂
+            </div>
+            
+            <h1 class="font-fun text-4xl mb-4 text-neon-green text-shadow-lg">
+                YOWN!!!
+            </h1>
+            
+            <p class="text-xl font-bold text-white mb-2 leading-relaxed">
+                Palit na kam irimnon! 🍾
+            </p>
+            
+            <p class="text-neon-pink text-glow-pink font-extrabold text-lg bg-gray-900/50 p-4 rounded-xl border border-pink-500/30">
+                "Walang uwian hanggang 'di gumagapang!" 🍻
+            </p>
+
+            <button onclick="location.reload()" class="mt-8 px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm font-bold rounded-full transition-colors">
+                I-prank ang iba
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Confetti Container -->
+    <div id="confetti-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden hidden"></div>
+
+    <script>
+        const btnNo = document.getElementById('btn-no');
+        const btnYes = document.getElementById('btn-yes');
+        const questionView = document.getElementById('question-view');
+        const successView = document.getElementById('success-view');
+        const confettiContainer = document.getElementById('confetti-container');
+
+        let isDodging = false;
+
+        // Function to move the "No" button to a random location
+        function dodgeCursor() {
+            // Change position to fixed so it breaks out of the flex container
+            // and moves relative to the entire window.
+            if (!isDodging) {
+                btnNo.style.position = 'fixed';
+                isDodging = true;
+            }
+
+            // Get viewport dimensions
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            // Get button dimensions
+            const btnWidth = btnNo.offsetWidth;
+            const btnHeight = btnNo.offsetHeight;
+
+            // Define safe padding so it doesn't go off-screen
+            const padding = 20;
+
+            // Calculate random coordinates within safe bounds
+            const maxX = windowWidth - btnWidth - padding;
+            const maxY = windowHeight - btnHeight - padding;
+
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+            // Apply new coordinates
+            btnNo.style.left = `${randomX}px`;
+            btnNo.style.top = `${randomY}px`;
+            
+            // Add a slight rotation for comedic effect
+            const randomRotate = Math.floor(Math.random() * 40) - 20; // between -20 and 20 degrees
+            btnNo.style.transform = `rotate(${randomRotate}deg) scale(0.9)`;
+        }
+
+        // Event listeners to trigger dodging
+        // mouseover works for desktops
+        btnNo.addEventListener('mouseover', dodgeCursor);
+        
+        // touchstart works for mobile devices
+        btnNo.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Prevents the touch from becoming a click
+            dodgeCursor();
+        });
+
+        // Just in case they somehow manage to click it (keyboard navigation, etc.)
+        btnNo.addEventListener('click', function(e) {
+            e.preventDefault();
+            dodgeCursor();
+        });
+
+        // Function to handle "Yes" button click
+        btnYes.addEventListener('click', function() {
+            // Hide initial view
+            questionView.classList.add('hidden');
+            
+            // Completely hide the runaway button
+            btnNo.style.display = 'none';
+
+            // Show success view
+            successView.classList.remove('hidden');
+            successView.classList.add('flex');
+
+            // Trigger visual celebration
+            createConfetti();
+            playSynthCheer();
+        });
+
+        // Function to create CSS confetti
+        function createConfetti() {
+            confettiContainer.classList.remove('hidden');
+            const colors = ['#39ff14', '#00f0ff', '#ff007f', '#ffe600', '#ffffff'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetto = document.createElement('div');
+                confetto.classList.add('confetti');
+                
+                // Random properties
+                confetto.style.left = Math.random() * 100 + 'vw';
+                confetto.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetto.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confetto.style.animationDelay = (Math.random() * 2) + 's';
+                
+                // Random shapes
+                if (Math.random() > 0.5) {
+                    confetto.style.borderRadius = '50%';
+                }
+                
+                confettiContainer.appendChild(confetto);
+            }
+        }
+
+        // Pure Web Audio API Synth to play a happy "cheer" sound without external files
+        function playSynthCheer() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioContext();
+                
+                const playNote = (freq, startTime, duration) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
+                    
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime + startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.start(ctx.currentTime + startTime);
+                    osc.stop(ctx.currentTime + startTime + duration);
+                };
+
+                // Happy ascending chord progression
+                playNote(523.25, 0, 0.3); // C5
+                playNote(659.25, 0.1, 0.3); // E5
+                playNote(783.99, 0.2, 0.4); // G5
+                playNote(1046.50, 0.3, 0.6); // C6
+            } catch (e) {
+                console.log("Audio not supported or blocked by browser.");
+            }
+        }
+    </script>
+</body>
+</html>
